@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies first for better layer caching
+COPY web/package*.json ./
+RUN npm install
+
+# Copy application source and build
+COPY web ./
+
+ARG VITE_API_BASE_URL=http://backend:5000
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
+RUN npm run build
+
+EXPOSE 5173
+
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]

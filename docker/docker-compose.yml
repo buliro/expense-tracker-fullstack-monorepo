@@ -1,0 +1,28 @@
+name: expense-tracker
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    environment:
+      - EXPENSE_TRACKER_ENV=dev
+      - FLASK_ENV=development
+    volumes:
+      - data:/app/data
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        VITE_API_BASE_URL: http://localhost:5000
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  data:
